@@ -180,7 +180,7 @@
                     document.getElementById('editDoctor').value = data.patient.doctor;
                     $('#editModal').modal('show');
                 } else {
-                    alert(data.error_message || 'Error fetching patient data');
+                    alert("Failed to fetch patient data");
                 }
             })
             .catch(error => {

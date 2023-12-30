@@ -94,3 +94,4 @@ def get_patient(patient_id):
             return jsonify({'success': False, 'error_message': 'Patient not found'})
     except Exception as e:
         return jsonify({'success': False, 'error_message': str(e)})
+
