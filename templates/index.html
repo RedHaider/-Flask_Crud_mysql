@@ -46,7 +46,7 @@
                                     <td>{{ patient['disease'] }}</td>
                                     <td>{{ patient['doctor'] }}</td>
                                     <td>
-                                        <button type="button" class="btn btn-primary btn-sm">Edit</button>
+                                        <button type="button" class="btn btn-primary btn-sm" onclick="openEditModal(`{{patient['id']}}`)">Edit</button>
                                         <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(`{{ patient['id'] }}`)">Delete</button>
                                     </td>
                                     
@@ -101,6 +101,44 @@
         </div>
     </div>
 </div>
+<!--Start The modal part for the button part of edit student-->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Patient</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Your form content goes here -->
+                <form method="post" id="editForm">
+                    <div class="form-group">
+                        <label for="editName">Name</label>
+                        <input type="text" class="form-control" id="editName" name="editName" placeholder="Patient Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="editEmail" name="editEmail" placeholder="name@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="doctor">Doctor</label>
+                        <input type="text" class="form-control" id="editDoctor" name="editDoctor" placeholder="HIV+">
+                    </div>
+                    <div class="form-group">
+                        <label for="disease">Disease</label>
+                        <input type="text" class="form-control" id="editDisease" name="editDisease" placeholder="Haturi Doctor">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 <!--End The modal part for the buttion part of add student-->
 <!-- Bootstrap JS and Popper.js (optional, but required for some Bootstrap features) -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
@@ -127,6 +165,28 @@
                     alert("Error occurred during deletion");
                 });
         }
+    }
+    // Function to open the edit modal with existing data
+    function openEditModal(patientId) {
+        // Fetch existing data for the patient with the given ID
+        fetch(`/get_patient/${patientId}`,{method:'GET'})
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Populate the form in the edit modal with existing data
+                    document.getElementById('editName').value = data.patient.name;
+                    document.getElementById('editEmail').value = data.patient.email;
+                    document.getElementById('editDisease').value = data.patient.disease;
+                    document.getElementById('editDoctor').value = data.patient.doctor;
+                    $('#editModal').modal('show');
+                } else {
+                    alert(data.error_message || 'Error fetching patient data');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Error occurred during data retrieval");
+            });
     }
 </script>
 

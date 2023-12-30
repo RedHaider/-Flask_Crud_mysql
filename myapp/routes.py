@@ -3,6 +3,7 @@
 from myapp import app
 from flask import render_template, request, redirect, url_for 
 from flask_mysqldb import MySQL
+from flask import jsonify
 
 mysql = MySQL(app)
 #-------------------------------------------
@@ -60,7 +61,7 @@ def add_patient():
 #--------------Delete Patient---------------
 #-------------------------------------------
       
-from flask import jsonify
+
 
 @app.route('/delete_patient/<int:patient_id>', methods=['DELETE'])
 def delete_patient(patient_id):
@@ -72,3 +73,24 @@ def delete_patient(patient_id):
         return jsonify(success=True)
     except Exception as e:
         return jsonify(success=False, error=str(e))
+
+#-------------------------------------------
+#--------------Edit Patient---------------
+#-------------------------------------------
+
+
+# Add a route to fetch patient data for editing
+@app.route('/get_patient/<int:patient_id>', methods=['GET'])
+def get_patient(patient_id):
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT * FROM patient_information WHERE id = %s", (patient_id,))
+        patient = cursor.fetchone()
+        cursor.close()
+
+        if patient:
+            return jsonify({'success': True, 'patient': patient})
+        else:
+            return jsonify({'success': False, 'error_message': 'Patient not found'})
+    except Exception as e:
+        return jsonify({'success': False, 'error_message': str(e)})
